@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "recipient": "Recipient #1",
+    "invoiceDate": "Sat Jan 01 2022 00:00:00 GMT+0200 (Eastern European Standard Time)",
+    "invoiceNumber": "ORS-001",
+    "status": "PAID",
+    "lineItmes": [
+      {
+        "id": 1,
+        "product": {
+          "id": 1,
+          "name": "Sneakers",
+          "description": "Comfortable and stylish sneakers for everyday wear.",
+          "unitPrice": 79.99,
+          "tax": 0.0825
+        },
+        "quantity": 2,
+        "total": 173.57
+      },
+      {
+        "id": 2,
+        "product": {
+          "id": 3,
+          "name": "Bluetooth Speaker",
+          "description": "Portable wireless speaker for streaming music on-the-go.",
+          "unitPrice": 89.99,
+          "tax": 0.0825
+        },
+        "quantity": 1,
+        "total": 97.78
+      },
+      {
+        "id": 3,
+        "product": {
+          "id": 5,
+          "name": "Wireless Earbuds",
+          "description": "Bluetooth earbuds with noise-cancellation and long battery life.",
+          "unitPrice": 129.99,
+          "tax": 0.0825
+        },
+        "quantity": 3,
+        "total": 423.08
+      }
+    ],
+    "total": 694.43
+  },
+  {
+    "id": 2,
+    "recipient": "Recipient #2",
+    "invoiceDate": "Wed Feb 02 2022 00:00:00 GMT+0200 (Eastern European Standard Time)",
+    "invoiceNumber": "ORS-002",
+    "status": "UNPAID",
+    "lineItems": [
+      {
+        "id": 4,
+        "product": {
+          "id": 7,
+          "name": "Gaming Mouse",
+          "description": "Precision gaming mouse with customizable buttons and RGB lighting.",
+          "unitPrice": 79.99,
+          "tax": 0.0825
+        },
+        "quantity": 1,
+        "total": 86.94
+      }
+    ],
+    "total": 86.94
+  },
+  {
+    "id": 3,
+    "recipient": "Recipient #3",
+    "invoiceDate": "Thu Mar 03 2022 00:00:00 GMT+0200 (Eastern European Standard Time)",
+    "invoiceNumber": "ORS-003",
+    "status": "DRAFT",
+    "lineItems": [
+      {
+        "id": 5,
+        "product": {
+          "id": 10,
+          "name": "Portable Power Bank",
+          "description": "High-capacity power bank for charging smartphones and other devices on-the-go.",
+          "unitPrice": 39.99,
+          "tax": 0.0825
+        },
+        "quantity": 3,
+        "total": 131.96
+      }
+    ],
+    "total": 131.96
+  }
+]

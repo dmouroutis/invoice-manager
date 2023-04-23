@@ -1,35 +1,16 @@
 <script setup>
-import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { View, Edit, Delete } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 
-// @TODO to be replaced with locastorage & state
-const generateDummyData = (numEntries) => {
-  const data = []
+import { useInvoicesStore } from '@/stores/invoices'
 
-  for (let i = 0; i < numEntries; i++) {
-    const id = i + 1
+const store = useInvoicesStore()
 
-    const ORS = '' + id
-    const recipient = `Recipient #${id}`
-    const invoiceDate = new Date(2022, i % 12, (i % 28) + 1, 0, 0, 0)
-    const invoiceNumber = `ORS-${'000'.substring(0, 3 - ORS.length) + ORS}`
-    const status = ['PAID', 'UNPAID', 'DRAFT'][Math.floor(Math.random() * 3)]
-    const total = Math.floor(Math.random() * 10000) / 100
+const formatDate = (invoiceDate) => {
+  // Due to JSON stringify/parsing we need to revert the date back to DateTime object
+  const date = typeof invoiceDate === 'string' ? new Date(invoiceDate) : invoiceDate
 
-    data.push({ id, recipient, invoiceDate, invoiceNumber, status, total })
-  }
-
-  return data
-}
-
-const tableData = ref([])
-
-// Generate dummy data
-tableData.value = generateDummyData(30)
-
-const formatDate = (date) => {
   const day = date.getDate().toString().padStart(2, '0')
   const month = (date.getMonth() + 1).toString().padStart(2, '0') // months are zero-based
   const year = date.getFullYear().toString()
@@ -43,7 +24,7 @@ const formatStatus = (status) => {
   else if (status === 'DRAFT') return 'Draft'
 }
 
-const confirmDeletion = (itemID) => {
+const confirmDeletion = (invoiceID) => {
   ElMessageBox.confirm('You will permanently delete this invoice. Continue?', 'Warning', {
     confirmButtonText: 'Delete',
     cancelButtonText: 'Cancel',
@@ -51,7 +32,7 @@ const confirmDeletion = (itemID) => {
   })
     .then(() => {
       // Delete invoice
-      tableData.value = tableData.value.filter((item) => item.id !== itemID)
+      store.deleteInvoice(invoiceID)
     })
     .catch(() => {
       // Delete cancelled
@@ -71,7 +52,7 @@ const confirmDeletion = (itemID) => {
   </el-card>
 
   <el-card>
-    <el-table class="width-100 mb-2" :data="tableData">
+    <el-table class="width-100 mb-2" :data="store.invoices">
       <el-table-column prop="invoiceDate" label="Invoice Date">
         <template v-slot="scope">
           {{ formatDate(scope.row.invoiceDate) }}

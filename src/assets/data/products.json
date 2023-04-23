@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "Sneakers",
+    "description": "Comfortable and stylish sneakers for everyday wear.",
+    "unitPrice": 79.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 2,
+    "name": "Backpack",
+    "description": "Durable backpack with multiple compartments for carrying essentials.",
+    "unitPrice": 49.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 3,
+    "name": "Bluetooth Speaker",
+    "description": "Portable wireless speaker for streaming music on-the-go.",
+    "unitPrice": 89.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 4,
+    "name": "Smartwatch",
+    "description": "Smartwatch with fitness tracking and notification features.",
+    "unitPrice": 249.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 5,
+    "name": "Wireless Earbuds",
+    "description": "Bluetooth earbuds with noise-cancellation and long battery life.",
+    "unitPrice": 129.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 6,
+    "name": "Laptop",
+    "description": "High-performance laptop with a large display and fast processor.",
+    "unitPrice": 999.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 7,
+    "name": "Gaming Mouse",
+    "description": "Precision gaming mouse with customizable buttons and RGB lighting.",
+    "unitPrice": 79.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 8,
+    "name": "Wireless Charger",
+    "description": "Qi-compatible wireless charger for smartphones and other devices.",
+    "unitPrice": 29.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 9,
+    "name": "Fitness Tracker",
+    "description": "Wearable device for tracking steps, heart rate, and sleep quality.",
+    "unitPrice": 69.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 10,
+    "name": "Portable Power Bank",
+    "description": "High-capacity power bank for charging smartphones and other devices on-the-go.",
+    "unitPrice": 39.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 11,
+    "name": "Action Camera",
+    "description": "Waterproof camera for capturing high-quality action footage.",
+    "unitPrice": 199.99,
+    "tax": 0.0825
+  },
+  {
+    "id": 12,
+    "name": "Smart Thermostat",
+    "description": "Wi-Fi enabled thermostat for controlling home heating and cooling remotely.",
+    "unitPrice": 149.99,
+    "tax": 0.0825
+  }
+]
