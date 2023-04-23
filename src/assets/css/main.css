@@ -1,0 +1,10 @@
+@import 'normalize.css/normalize.css';
+
+@import './utilities.css';
+
+body {
+  min-height: 100%;
+  font-family: Open Sans, sans-serif;
+  font-size: var(--el-font-size-base);
+  background-color: #f2f3f5;
+}

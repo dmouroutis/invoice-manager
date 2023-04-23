@@ -4,14 +4,22 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <el-container>
-    <el-header>
+    <el-header height="80px">
       <RouterLink to="/">
-        <img alt="Vue logo" class="logo" src="@/assets/amdocs-logo.png" width="160" height="35" />
+        <img
+          alt="Vue logo"
+          class="logo"
+          src="@/assets/images/amdocs-logo.png"
+          width="160"
+          height="35"
+        />
       </RouterLink>
     </el-header>
 
     <el-main>
       <RouterView />
+
+      <el-backtop :right="10" :bottom="20" />
     </el-main>
   </el-container>
 </template>
@@ -20,6 +28,6 @@ import { RouterLink, RouterView } from 'vue-router'
 header {
   display: flex;
   align-items: center;
-  background-color: #131318;
+  background: #131318 url('./assets/images/dancer-new-lg.jpg') 50% no-repeat;
 }
 </style>
