@@ -5,7 +5,7 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <el-container>
     <el-header height="80px">
-      <RouterLink to="/">
+      <RouterLink to="/invoices">
         <img
           alt="Vue logo"
           class="logo"
