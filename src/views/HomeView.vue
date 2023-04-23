@@ -1,9 +1,10 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import PageContainer from '../components/PageContainer.vue'
+import InvoiceListing from '../components/InvoiceListing.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <PageContainer>
+    <InvoiceListing />
+  </PageContainer>
 </template>
