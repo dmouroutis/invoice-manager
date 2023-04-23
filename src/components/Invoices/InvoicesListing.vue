@@ -38,6 +38,14 @@ const confirmDeletion = (invoiceID) => {
       // Delete cancelled
     })
 }
+
+const dateSorting = (a, b) => {
+  // Due to JSON stringify/parsing we need to revert the date back to DateTime object
+  const date1 = typeof a.invoiceDate === 'string' ? new Date(a.invoiceDate) : a.invoiceDate
+  const date2 = typeof a.invoiceDate === 'string' ? new Date(b.invoiceDate) : b.invoiceDate
+
+  return date1 > date2 ? 1 : -1
+}
 </script>
 
 <template>
@@ -52,22 +60,26 @@ const confirmDeletion = (invoiceID) => {
   </el-card>
 
   <el-card>
-    <el-table class="width-100 mb-2" :data="store.invoices">
-      <el-table-column prop="invoiceDate" label="Invoice Date">
+    <el-table
+      class="width-100 mb-2"
+      :data="store.invoices"
+      :default-sort="{ prop: 'invoiceDate', order: 'descending' }"
+    >
+      <el-table-column sortable :sort-method="dateSorting" prop="invoiceDate" label="Invoice Date">
         <template v-slot="scope">
           {{ formatDate(scope.row.invoiceDate) }}
         </template>
       </el-table-column>
-      <el-table-column prop="invoiceNumber" label="Invoice #"></el-table-column>
-      <el-table-column prop="recipient" label="Recipient"></el-table-column>
+      <el-table-column sortable prop="invoiceNumber" label="Invoice #"></el-table-column>
+      <el-table-column sortable prop="recipient" label="Recipient"></el-table-column>
 
-      <el-table-column prop="status" label="Status">
+      <el-table-column sortable prop="status" label="Status">
         <template v-slot="scope">
           <span class="status" :class="scope.row.status">{{ formatStatus(scope.row.status) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="total" label="Final Amount">
+      <el-table-column sortable prop="total" label="Final Amount">
         <template v-slot="scope"> USD ${{ scope.row.total.toFixed(2) }} </template>
       </el-table-column>
 
