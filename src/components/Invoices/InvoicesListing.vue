@@ -2,11 +2,11 @@
 import statuses from '@/assets/data/statuses.json'
 import useScreenWidth from '@/helpers/useScreenWidth'
 
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useInvoicesStore } from '@/stores/invoices'
 
-import { View, Edit, Delete } from '@element-plus/icons-vue'
+import { View, Edit, Delete, Search } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 
 const store = useInvoicesStore()
@@ -14,6 +14,25 @@ const store = useInvoicesStore()
 const { screenWidth } = useScreenWidth()
 const isMobile = computed(() => {
   return screenWidth.value < 767
+})
+
+const search = ref('')
+
+const filteredInvoices = computed(() => {
+  const s = search.value.toLowerCase()
+  if (!s) return store.invoices
+
+  return store.invoices.filter((invoice) => {
+    const hasProductMatch = invoice.lineItems.filter((item) =>
+      item.product.name.toLowerCase().includes(s)
+    )
+
+    return (
+      invoice.recipient.toLowerCase().includes(s) ||
+      invoice.invoiceNumber.toLowerCase().includes(s) ||
+      hasProductMatch.length
+    )
+  })
 })
 
 const formatDate = (invoiceDate) => {
@@ -67,9 +86,17 @@ const dateSorting = (a, b) => {
   </el-card>
 
   <el-card>
+    <el-input
+      v-model="search"
+      size="large"
+      placeholder="Search invoices by number, recipient or invoice products"
+      :suffix-icon="Search"
+      class="mb-2"
+    />
+
     <el-table
       class="width-100 mb-2"
-      :data="store.invoices"
+      :data="filteredInvoices"
       :default-sort="{ prop: 'invoiceDate', order: 'descending' }"
     >
       <el-table-column
