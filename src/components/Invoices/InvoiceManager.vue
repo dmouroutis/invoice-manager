@@ -2,7 +2,7 @@
 import statuses from '@/assets/data/statuses.json'
 import useScreenWidth from '@/helpers/useScreenWidth'
 
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInvoicesStore } from '@/stores/invoices'
 
@@ -48,8 +48,36 @@ const initFormData = () => {
     return ref(JSON.parse(JSON.stringify(invoice)))
   }
 }
-
+const form = ref()
 const formData = initFormData()
+
+const rules = reactive({
+  recipient: [{ required: true, message: 'Please input a Recipient name', trigger: 'blur' }],
+  invoiceDate: [
+    {
+      type: 'date',
+      required: true,
+      message: 'Please pick an Invoice date',
+      trigger: 'change'
+    }
+  ],
+  lineItems: [
+    {
+      validator: (rule, value, callback) => {
+        const products = value.filter((item) => item.product.id && item.quantity > 0)
+
+        if (products.length > 0) {
+          callback()
+        } else {
+          callback(
+            new Error('Please select at least one product and enter its corresponding quantity')
+          )
+        }
+      },
+      trigger: 'change'
+    }
+  ]
+})
 
 const title = computed(() => {
   const action = props.mode === 'view' ? 'Viewing' : props.mode === 'edit' ? 'Editing' : 'Creating'
@@ -89,31 +117,38 @@ const updateLineItem = (quantity, lineItem) => {
   lineItem.total = Math.round(total * 100) / 100
 }
 
-const submitForm = () => {
-  const invoice = {
-    ...formData.value,
-    total: invoiceTotal
-  }
+const submitForm = async (formEl) => {
+  if (!formEl) return
 
-  invoice.lineItems = invoice.lineItems.filter((item) => item.quantity > 0)
+  await formEl.validate((valid) => {
+    if (valid) {
+      const invoice = {
+        ...formData.value,
+        total: invoiceTotal
+      }
 
-  if (props.mode === 'create') {
-    store.createInvoice(invoice)
+      // Remove any products without quantity
+      invoice.lineItems = invoice.lineItems.filter((item) => item.quantity > 0)
 
-    ElNotification({
-      title: 'Invoice has been created',
-      type: 'success',
-      duration: 1500
-    })
-  } else {
-    store.updateInvoice(invoice)
+      if (props.mode === 'create') {
+        store.createInvoice(invoice)
 
-    ElNotification({
-      title: 'Invoice has been updated',
-      type: 'success',
-      duration: 1500
-    })
-  }
+        ElNotification({
+          title: 'Invoice has been created',
+          type: 'success',
+          duration: 1500
+        })
+      } else {
+        store.updateInvoice(invoice)
+
+        ElNotification({
+          title: 'Invoice has been updated',
+          type: 'success',
+          duration: 1500
+        })
+      }
+    }
+  })
 }
 </script>
 
@@ -128,15 +163,17 @@ const submitForm = () => {
 
   <el-card>
     <el-form
+      :rules="rules"
       :model="formData"
       :disabled="!isEditable"
       ref="form"
       :label-width="isMobile ? '' : '100px'"
+      status-icon
     >
-      <el-form-item label="Recipient">
+      <el-form-item label="Recipient" prop="recipient">
         <el-input v-model="formData.recipient"></el-input>
       </el-form-item>
-      <el-form-item label="Date">
+      <el-form-item label="Date" prop="invoiceDate">
         <el-date-picker v-model="formData.invoiceDate" type="date"></el-date-picker>
       </el-form-item>
 
@@ -148,7 +185,7 @@ const submitForm = () => {
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="lineItems">
         <el-table class="width-100 mb-2" :data="formData.lineItems">
           <el-table-column label="Items" :width="isMobile ? 150 : 'auto'">
             <template #default="scope">
@@ -213,7 +250,7 @@ const submitForm = () => {
       </el-form-item>
 
       <el-form-item v-if="isEditable">
-        <el-button type="primary" @click="submitForm"> Save Invoice </el-button>
+        <el-button type="primary" @click="submitForm(form)"> Save Invoice </el-button>
       </el-form-item>
     </el-form>
   </el-card>
