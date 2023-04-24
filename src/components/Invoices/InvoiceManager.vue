@@ -1,10 +1,13 @@
 <script setup>
-import { ElNotification } from 'element-plus'
 import statuses from '@/assets/data/statuses.json'
+import useScreenWidth from '@/helpers/useScreenWidth'
 
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInvoicesStore } from '@/stores/invoices'
+
+import { ElNotification } from 'element-plus'
+import { Delete } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const store = useInvoicesStore()
@@ -12,6 +15,11 @@ const store = useInvoicesStore()
 const props = defineProps({
   mode: String,
   id: Number
+})
+
+const { screenWidth } = useScreenWidth()
+const isMobile = computed(() => {
+  return screenWidth.value < 767
 })
 
 // Expanded for better clarity, create mode has no data yet.
@@ -119,7 +127,12 @@ const submitForm = () => {
   </el-card>
 
   <el-card>
-    <el-form :model="formData" :disabled="!isEditable" ref="form" label-width="100px">
+    <el-form
+      :model="formData"
+      :disabled="!isEditable"
+      ref="form"
+      :label-width="isMobile ? '' : '100px'"
+    >
       <el-form-item label="Recipient">
         <el-input v-model="formData.recipient"></el-input>
       </el-form-item>
@@ -128,7 +141,7 @@ const submitForm = () => {
       </el-form-item>
 
       <el-form-item label="Status">
-        <el-radio-group v-model="formData.status">
+        <el-radio-group v-model="formData.status" :size="isMobile ? 'small' : 'default'">
           <el-radio-button v-for="status in statuses" :key="status.code" :label="status.code">
             {{ status.label }}
           </el-radio-button>
@@ -136,8 +149,8 @@ const submitForm = () => {
       </el-form-item>
 
       <el-form-item>
-        <el-table class="mb-2" :data="formData.lineItems" style="width: 100%">
-          <el-table-column label="Items">
+        <el-table class="width-100 mb-2" :data="formData.lineItems">
+          <el-table-column label="Items" :width="isMobile ? 150 : 'auto'">
             <template #default="scope">
               <el-select v-model="scope.row.product" value-key="id" placeholder="Select Item">
                 <el-option
@@ -150,43 +163,44 @@ const submitForm = () => {
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="Description">
+          <el-table-column label="Description" :width="isMobile ? 150 : 'auto'">
             <template #default="{ row }">
               <span v-if="row.product.description">{{ row.product.description }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="Quantity">
+          <el-table-column label="Quantity" :width="isMobile ? 150 : 'auto'">
             <template #default="{ row }">
               <el-input-number
                 v-if="row.product.id"
                 v-model="row.quantity"
                 @change="updateLineItem($event, row)"
                 :min="0"
+                :size="isMobile ? 'small' : 'default'"
               />
             </template>
           </el-table-column>
 
-          <el-table-column label="Price" width="120px">
+          <el-table-column label="Price">
             <template #default="{ row }">
               <span v-if="row.product.unitPrice"> ${{ row.product.unitPrice }} </span>
             </template>
           </el-table-column>
 
-          <el-table-column label="Tax" width="120px">
+          <el-table-column label="Tax">
             <template #default="{ row }">
               <span v-if="row.product.tax"> {{ row.product.tax * 100 }}% </span>
             </template>
           </el-table-column>
 
-          <el-table-column label="Total" width="120px">
+          <el-table-column label="Total">
             <template #default="{ row }">
               <span v-if="row.product.id">${{ row.total }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column v-if="isEditable" label="Actions">
+          <el-table-column v-if="isEditable" label="Actions" :width="isMobile ? 80 : 'auto'">
             <template #default="{ row }">
-              <el-button type="danger" @click="removeLineItem(row)"> Remove </el-button>
+              <el-button @click="removeLineItem(row)" type="danger" :icon="Delete" circle />
             </template>
           </el-table-column>
         </el-table>
@@ -204,3 +218,18 @@ const submitForm = () => {
     </el-form>
   </el-card>
 </template>
+
+<style>
+@media only screen and (max-width: 767px) {
+  .el-form-item {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .el-form-item__label {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+</style>

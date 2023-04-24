@@ -1,13 +1,20 @@
 <script setup>
+import statuses from '@/assets/data/statuses.json'
+import useScreenWidth from '@/helpers/useScreenWidth'
+
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useInvoicesStore } from '@/stores/invoices'
+
 import { View, Edit, Delete } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 
-import statuses from '@/assets/data/statuses.json'
-
-import { useInvoicesStore } from '@/stores/invoices'
-
 const store = useInvoicesStore()
+
+const { screenWidth } = useScreenWidth()
+const isMobile = computed(() => {
+  return screenWidth.value < 767
+})
 
 const formatDate = (invoiceDate) => {
   // Due to JSON stringify/parsing we need to revert the date back to DateTime object
@@ -65,25 +72,40 @@ const dateSorting = (a, b) => {
       :data="store.invoices"
       :default-sort="{ prop: 'invoiceDate', order: 'descending' }"
     >
-      <el-table-column sortable :sort-method="dateSorting" prop="invoiceDate" label="Invoice Date">
+      <el-table-column
+        sortable
+        :sort-method="dateSorting"
+        prop="invoiceDate"
+        label="Invoice Date"
+        :width="isMobile ? 140 : 'auto'"
+      >
         <template #default="{ row }">
           {{ formatDate(row.invoiceDate) }}
         </template>
       </el-table-column>
-      <el-table-column sortable prop="invoiceNumber" label="Invoice #"></el-table-column>
-      <el-table-column sortable prop="recipient" label="Recipient"></el-table-column>
 
-      <el-table-column sortable prop="status" label="Status">
+      <el-table-column
+        sortable
+        prop="invoiceNumber"
+        label="Invoice #"
+        :width="isMobile ? 120 : 'auto'"
+      >
+      </el-table-column>
+
+      <el-table-column sortable prop="recipient" label="Recipient" :width="isMobile ? 120 : 'auto'">
+      </el-table-column>
+
+      <el-table-column sortable prop="status" label="Status" :width="isMobile ? 140 : 'auto'">
         <template #default="{ row }">
           <span class="status" :class="row.status">{{ formatStatus(row.status) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column sortable prop="total" label="Final Amount">
+      <el-table-column sortable prop="total" label="Final Amount" :width="isMobile ? 150 : 'auto'">
         <template #default="{ row }"> USD ${{ row.total.toFixed(2) }} </template>
       </el-table-column>
 
-      <el-table-column label="Actions">
+      <el-table-column label="Actions" :width="isMobile ? 150 : 'auto'">
         <template #default="{ row }">
           <RouterLink :to="`/invoice/view/${row.id}`">
             <el-button class="mr-1" type="success" :icon="View" circle />
