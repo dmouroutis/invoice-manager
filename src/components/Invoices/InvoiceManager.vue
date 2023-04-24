@@ -1,9 +1,10 @@
 <script setup>
+import { ElNotification } from 'element-plus'
+import statuses from '@/assets/data/statuses.json'
+
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useInvoicesStore } from '@/stores/invoices'
-
-import statuses from '@/assets/data/statuses.json'
 
 const router = useRouter()
 const store = useInvoicesStore()
@@ -13,23 +14,38 @@ const props = defineProps({
   id: Number
 })
 
-const title = computed(() => {
-  if (props.mode === 'view') return `Viewing Invoice #${invoice.invoiceNumber}`
-  else if (props.mode === 'edit') return `Editing Invoice #${invoice.invoiceNumber}`
-  return `Creating Invoice`
-})
+// Expanded for better clarity, create mode has no data yet.
+const initFormData = () => {
+  if (props.mode === 'create') {
+    const getNextInvoiceIDs = store.getNextInvoiceIDs
 
-const formData = ref({
-  recipient: '',
-  date: '',
-  status: '',
-  lineItems: [
-    {
-      product: {},
-      quantity: 0,
-      total: 0
-    }
-  ]
+    return ref({
+      id: getNextInvoiceIDs.id,
+      invoiceNumber: getNextInvoiceIDs.invoiceNumber,
+      recipient: '',
+      invoiceDate: '',
+      status: 'DRAFT',
+      lineItems: [
+        {
+          product: {},
+          quantity: 0,
+          total: 0
+        }
+      ]
+    })
+  } else {
+    const invoice = store.getInvoiceById(props.id)
+
+    // Sever object-deep reference and update data only on form save
+    return ref(JSON.parse(JSON.stringify(invoice)))
+  }
+}
+
+const formData = initFormData()
+
+const title = computed(() => {
+  const action = props.mode === 'view' ? 'Viewing' : props.mode === 'edit' ? 'Editing' : 'Creating'
+  return `${action} Invoice #${formData.value.invoiceNumber}`
 })
 
 const invoiceTotal = computed(() => {
@@ -39,12 +55,10 @@ const invoiceTotal = computed(() => {
     sum += item.total
   })
 
-  return sum
+  return Math.round(sum * 100) / 100
 })
 
-const isDisabled = computed(() => props.mode === 'view')
-
-const invoice = store.getInvoiceById(props.id)
+const isEditable = computed(() => props.mode !== 'view')
 
 const addLineItem = () => {
   formData.value.lineItems.push({
@@ -68,7 +82,28 @@ const updateLineItem = (quantity, lineItem) => {
 }
 
 const submitForm = () => {
-  // Handle form submission here
+  const invoice = {
+    ...formData.value,
+    total: invoiceTotal
+  }
+
+  if (props.mode === 'create') {
+    store.createInvoice(invoice)
+
+    ElNotification({
+      title: 'Invoice has been created',
+      type: 'success',
+      duration: 1500
+    })
+  } else {
+    store.updateInvoice(invoice)
+
+    ElNotification({
+      title: 'Invoice has been updated',
+      type: 'success',
+      duration: 1500
+    })
+  }
 }
 </script>
 
@@ -82,22 +117,20 @@ const submitForm = () => {
   </el-card>
 
   <el-card>
-    <el-form :model="formData" :disabled="isDisabled" ref="form" label-width="120px">
+    <el-form :model="formData" :disabled="!isEditable" ref="form" label-width="100px">
       <el-form-item label="Recipient">
         <el-input v-model="formData.recipient"></el-input>
       </el-form-item>
       <el-form-item label="Date">
-        <el-date-picker v-model="formData.date" type="datetime"></el-date-picker>
+        <el-date-picker v-model="formData.invoiceDate" type="date"></el-date-picker>
       </el-form-item>
+
       <el-form-item label="Status">
-        <el-select v-model="formData.status" placeholder="Select">
-          <el-option
-            v-for="status in statuses"
-            :key="status.code"
-            :label="status.label"
-            :value="status.code"
-          ></el-option>
-        </el-select>
+        <el-radio-group v-model="formData.status">
+          <el-radio-button v-for="status in statuses" :key="status.code" :label="status.code">
+            {{ status.label }}
+          </el-radio-button>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item>
@@ -149,22 +182,22 @@ const submitForm = () => {
             </template>
           </el-table-column>
 
-          <el-table-column label="Actions">
+          <el-table-column v-if="isEditable" label="Actions">
             <template #default="{ row }">
               <el-button type="danger" @click="removeLineItem(row)"> Remove </el-button>
             </template>
           </el-table-column>
         </el-table>
 
-        <el-button v-if="!isDisabled" @click="addLineItem">Add Line Item</el-button>
+        <el-button v-if="isEditable" @click="addLineItem">Add Line Item</el-button>
       </el-form-item>
 
       <el-form-item>
         <h2>Total: ${{ invoiceTotal }}</h2>
       </el-form-item>
 
-      <el-form-item v-if="!isDisabled">
-        <el-button type="primary" @click="submitForm"> Submit </el-button>
+      <el-form-item v-if="isEditable">
+        <el-button type="primary" @click="submitForm"> Save Invoice </el-button>
       </el-form-item>
     </el-form>
   </el-card>

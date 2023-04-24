@@ -5,7 +5,7 @@
     "invoiceDate": "Sat Jan 01 2022 00:00:00 GMT+0200 (Eastern European Standard Time)",
     "invoiceNumber": "ORS-001",
     "status": "PAID",
-    "lineItmes": [
+    "lineItems": [
       {
         "id": 1,
         "product": {

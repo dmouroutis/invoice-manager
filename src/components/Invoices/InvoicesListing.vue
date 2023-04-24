@@ -42,7 +42,7 @@ const confirmDeletion = (invoiceID) => {
 const dateSorting = (a, b) => {
   // Due to JSON stringify/parsing we need to revert the date back to DateTime object
   const date1 = typeof a.invoiceDate === 'string' ? new Date(a.invoiceDate) : a.invoiceDate
-  const date2 = typeof a.invoiceDate === 'string' ? new Date(b.invoiceDate) : b.invoiceDate
+  const date2 = typeof b.invoiceDate === 'string' ? new Date(b.invoiceDate) : b.invoiceDate
 
   return date1 > date2 ? 1 : -1
 }
