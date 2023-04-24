@@ -87,6 +87,8 @@ const submitForm = () => {
     total: invoiceTotal
   }
 
+  invoice.lineItems = invoice.lineItems.filter((item) => item.quantity > 0)
+
   if (props.mode === 'create') {
     store.createInvoice(invoice)
 
