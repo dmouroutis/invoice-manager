@@ -75,16 +75,6 @@ const dateSorting = (a, b) => {
 </script>
 
 <template>
-  <el-card class="mb-2">
-    <div class="d-flex align-center justify-space-between">
-      <h1>Invoices</h1>
-
-      <RouterLink to="/invoice/create">
-        <el-button type="primary">New Invoice</el-button>
-      </RouterLink>
-    </div>
-  </el-card>
-
   <el-card>
     <el-input
       v-model="search"

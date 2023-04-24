@@ -3,13 +3,12 @@ import statuses from '@/assets/data/statuses.json'
 import useScreenWidth from '@/helpers/useScreenWidth'
 
 import { ref, computed, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+
 import { useInvoicesStore } from '@/stores/invoices'
 
 import { ElNotification } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
-const router = useRouter()
 const store = useInvoicesStore()
 
 const props = defineProps({
@@ -79,11 +78,6 @@ const rules = reactive({
   ]
 })
 
-const title = computed(() => {
-  const action = props.mode === 'view' ? 'Viewing' : props.mode === 'edit' ? 'Editing' : 'Creating'
-  return `${action} Invoice #${formData.value.invoiceNumber}`
-})
-
 const invoiceTotal = computed(() => {
   let sum = 0
 
@@ -127,40 +121,30 @@ const submitForm = async (formEl) => {
         total: invoiceTotal
       }
 
+      let title = ''
+
       // Remove any products without quantity
       invoice.lineItems = invoice.lineItems.filter((item) => item.quantity > 0)
 
       if (props.mode === 'create') {
+        title = 'Invoice has been created'
         store.createInvoice(invoice)
-
-        ElNotification({
-          title: 'Invoice has been created',
-          type: 'success',
-          duration: 1500
-        })
       } else {
+        title = 'Invoice has been updated'
         store.updateInvoice(invoice)
-
-        ElNotification({
-          title: 'Invoice has been updated',
-          type: 'success',
-          duration: 1500
-        })
       }
+
+      ElNotification({
+        title,
+        type: 'success',
+        duration: 1500
+      })
     }
   })
 }
 </script>
 
 <template>
-  <el-card class="mb-2">
-    <el-page-header @back="router.back()">
-      <template #content>
-        <p>{{ title }}</p>
-      </template>
-    </el-page-header>
-  </el-card>
-
   <el-card>
     <el-form
       :rules="rules"
