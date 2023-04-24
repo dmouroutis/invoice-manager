@@ -3,6 +3,8 @@ import { RouterLink } from 'vue-router'
 import { View, Edit, Delete } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 
+import statuses from '@/assets/data/statuses.json'
+
 import { useInvoicesStore } from '@/stores/invoices'
 
 const store = useInvoicesStore()
@@ -18,10 +20,8 @@ const formatDate = (invoiceDate) => {
   return `${day}/${month}/${year}`
 }
 
-const formatStatus = (status) => {
-  if (status === 'PAID') return 'Paid in Full'
-  else if (status === 'UNPAID') return 'Sent, Unpaid'
-  else if (status === 'DRAFT') return 'Draft'
+const formatStatus = (code) => {
+  return statuses.find((status) => status.code === code).label
 }
 
 const confirmDeletion = (invoiceID) => {
@@ -66,34 +66,34 @@ const dateSorting = (a, b) => {
       :default-sort="{ prop: 'invoiceDate', order: 'descending' }"
     >
       <el-table-column sortable :sort-method="dateSorting" prop="invoiceDate" label="Invoice Date">
-        <template v-slot="scope">
-          {{ formatDate(scope.row.invoiceDate) }}
+        <template #default="{ row }">
+          {{ formatDate(row.invoiceDate) }}
         </template>
       </el-table-column>
       <el-table-column sortable prop="invoiceNumber" label="Invoice #"></el-table-column>
       <el-table-column sortable prop="recipient" label="Recipient"></el-table-column>
 
       <el-table-column sortable prop="status" label="Status">
-        <template v-slot="scope">
-          <span class="status" :class="scope.row.status">{{ formatStatus(scope.row.status) }}</span>
+        <template #default="{ row }">
+          <span class="status" :class="row.status">{{ formatStatus(row.status) }}</span>
         </template>
       </el-table-column>
 
       <el-table-column sortable prop="total" label="Final Amount">
-        <template v-slot="scope"> USD ${{ scope.row.total.toFixed(2) }} </template>
+        <template #default="{ row }"> USD ${{ row.total.toFixed(2) }} </template>
       </el-table-column>
 
       <el-table-column label="Actions">
-        <template v-slot="scope">
-          <RouterLink :to="`/invoice/view/${scope.row.id}`">
+        <template #default="{ row }">
+          <RouterLink :to="`/invoice/view/${row.id}`">
             <el-button class="mr-1" type="success" :icon="View" circle />
           </RouterLink>
 
-          <RouterLink :to="`/invoice/edit/${scope.row.id}`">
+          <RouterLink :to="`/invoice/edit/${row.id}`">
             <el-button class="mr-1" type="warning" :icon="Edit" circle />
           </RouterLink>
 
-          <el-button @click="confirmDeletion(scope.row.id)" type="danger" :icon="Delete" circle />
+          <el-button @click="confirmDeletion(row.id)" type="danger" :icon="Delete" circle />
         </template>
       </el-table-column>
     </el-table>

@@ -24,5 +24,10 @@ export const useInvoicesStore = defineStore('invoices', {
       this.invoices = this.invoices.filter((item) => item.id !== id)
       window.localStorage.setItem('invoices', JSON.stringify(this.invoices))
     }
+  },
+  getters: {
+    getInvoiceById: (state) => {
+      return (invoiceId) => state.invoices.find((item) => item.id === invoiceId)
+    }
   }
 })

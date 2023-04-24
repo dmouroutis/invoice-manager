@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Draft",
+    "code": "DRAFT"
+  },
+  {
+    "label": "Sent, Unpaid",
+    "code": "UNPAID"
+  },
+  {
+    "label": "Paid in Full",
+    "code": "PAID"
+  }
+]

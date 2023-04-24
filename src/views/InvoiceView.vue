@@ -1,11 +1,16 @@
-<template>
-  <h1>You are in {{ route.params.mode }} mode</h1>
-</template>
-
 <script setup>
 import { useRoute } from 'vue-router'
+import PageContainer from '../components/PageContainer.vue'
+import InvoiceManager from '../components/Invoices/InvoiceManager.vue'
 
 const route = useRoute()
+
+const mode = route.params.mode
+const invoiceID = parseInt(route.params.id)
 </script>
 
-<style lang="scss" scoped></style>
+<template>
+  <PageContainer>
+    <InvoiceManager :mode="mode" :id="invoiceID" />
+  </PageContainer>
+</template>
