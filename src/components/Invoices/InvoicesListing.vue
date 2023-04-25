@@ -18,21 +18,35 @@ const isMobile = computed(() => {
 
 const search = ref('')
 
+const pagination = ref({
+  currentPage: 1,
+  pageSize: 3,
+  pageSizes: [1, 3, 5, 10, 25]
+})
+
 const filteredInvoices = computed(() => {
   const s = search.value.toLowerCase()
-  if (!s) return store.invoices
+  const pag = pagination.value
 
-  return store.invoices.filter((invoice) => {
-    const hasProductMatch = invoice.lineItems.filter((item) =>
-      item.product.name.toLowerCase().includes(s)
+  if (!s)
+    return store.invoices.slice(
+      (pag.currentPage - 1) * pag.pageSize,
+      pag.currentPage * pag.pageSize
     )
 
-    return (
-      invoice.recipient.toLowerCase().includes(s) ||
-      invoice.invoiceNumber.toLowerCase().includes(s) ||
-      hasProductMatch.length
-    )
-  })
+  return store.invoices
+    .filter((invoice) => {
+      const hasProductMatch = invoice.lineItems.filter((item) =>
+        item.product.name.toLowerCase().includes(s)
+      )
+
+      return (
+        invoice.recipient.toLowerCase().includes(s) ||
+        invoice.invoiceNumber.toLowerCase().includes(s) ||
+        hasProductMatch.length
+      )
+    })
+    .slice((pag.currentPage - 1) * pag.pageSize, pag.currentPage * pag.pageSize)
 })
 
 const formatDate = (invoiceDate) => {
@@ -136,6 +150,14 @@ const dateSorting = (a, b) => {
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      v-model:current-page="pagination.currentPage"
+      v-model:page-size="pagination.pageSize"
+      :page-sizes="pagination.pageSizes"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="store.invoices.length"
+    />
   </el-card>
 </template>
 

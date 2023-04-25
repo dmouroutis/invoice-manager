@@ -3,6 +3,7 @@ import statuses from '@/assets/data/statuses.json'
 import useScreenWidth from '@/helpers/useScreenWidth'
 
 import { ref, computed, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 
 import { useInvoicesStore } from '@/stores/invoices'
 
@@ -10,6 +11,7 @@ import { ElNotification } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
 const store = useInvoicesStore()
+const router = useRouter()
 
 const props = defineProps({
   mode: String,
@@ -139,6 +141,8 @@ const submitForm = async (formEl) => {
         type: 'success',
         duration: 1500
       })
+
+      router.back()
     }
   })
 }
